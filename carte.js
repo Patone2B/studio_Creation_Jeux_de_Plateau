@@ -1,4 +1,3 @@
-
 const STORAGE_KEY = 'deckStudioLocal.v1';
 const CURRENT_KEY = 'deckStudioCurrentDeckId';
 const DB_NAME = 'deckStudioLocalDB';
