@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Éditeur de plateau</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand-card">
+        <div class="brand-badge">BP</div>
+        <div>
+          <h1>Board Planner</h1>
+          <p>Éditeur de plateau professionnel</p>
+        </div>
+      </div>
+
+      <section class="panel">
+        <h2>Grille</h2>
+
+        <label class="field">
+          <span>Type</span>
+          <select id="gridType">
+            <option value="square">Carrée</option>
+            <option value="hex">Hexagonale</option>
+            <option value="free">Libre</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Taille</span>
+          <input id="gridSize" type="range" min="20" max="120" value="50" />
+        </label>
+
+        <label class="field inline">
+          <input id="showGrid" type="checkbox" checked />
+          <span>Afficher la grille</span>
+        </label>
+
+        <button class="btn btn-primary" id="applyGridBtn">Appliquer la grille</button>
+      </section>
+
+      <section class="panel">
+        <h2>Fond</h2>
+
+        <label class="field">
+          <span>Image locale</span>
+          <input id="bgUpload" type="file" accept="image/*" />
+        </label>
+
+        <label class="field">
+          <span>Ou URL d’image</span>
+          <input id="bgUrl" type="text" placeholder="https://..." />
+        </label>
+
+        <div class="button-row">
+          <button class="btn" id="loadBgUrlBtn">Charger l’URL</button>
+          <button class="btn btn-ghost" id="clearBgBtn">Retirer le fond</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Zone intelligente</h2>
+
+        <label class="field">
+          <span>Nom de la zone</span>
+          <input id="zoneName" type="text" placeholder="Ex : Zone de combat" />
+        </label>
+
+        <label class="field">
+          <span>Type</span>
+          <select id="zoneType">
+            <option value="combat">Combat</option>
+            <option value="draw">Pioche</option>
+            <option value="objective">Objectif</option>
+            <option value="spawn">Apparition</option>
+            <option value="danger">Danger</option>
+            <option value="custom">Personnalisée</option>
+          </select>
+        </label>
+
+        <div class="button-row">
+          <button class="btn btn-primary" id="addRectZoneBtn">Ajouter zone rectangulaire</button>
+          <button class="btn" id="addCircleZoneBtn">Ajouter zone ronde</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Calques</h2>
+        <div class="layers-list">
+          <div class="layer-item">
+            <div>
+              <strong>Fond</strong>
+              <small>Image de base</small>
+            </div>
+            <span class="layer-tag">Layer</span>
+          </div>
+          <div class="layer-item">
+            <div>
+              <strong>Grille</strong>
+              <small>Repères de construction</small>
+            </div>
+            <span class="layer-tag">Layer</span>
+          </div>
+          <div class="layer-item">
+            <div>
+              <strong>Zones</strong>
+              <small>Zones intelligentes</small>
+            </div>
+            <span class="layer-tag">Layer</span>
+          </div>
+          <div class="layer-item">
+            <div>
+              <strong>Interface</strong>
+              <small>Sélection & outils</small>
+            </div>
+            <span class="layer-tag">UI</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel info-panel">
+        <h2>Note open source</h2>
+        <p>
+          Cet éditeur s’appuie sur <strong>Konva.js</strong>, une bibliothèque open source
+          pour les interfaces graphiques HTML5 canvas.
+        </p>
+      </section>
+    </aside>
+
+    <main class="workspace">
+      <header class="workspace-topbar">
+        <div>
+          <h2>Éditeur de plateau</h2>
+          <p>Créez des zones de jeu claires, lisibles et rassurantes pour vos joueurs.</p>
+        </div>
+
+        <div class="top-actions">
+          <button class="btn" id="deleteSelectedBtn">Supprimer la sélection</button>
+          <button class="btn btn-primary" id="exportBtn">Exporter PNG</button>
+        </div>
+      </header>
+
+      <section class="canvas-wrapper">
+        <div id="stageContainer"></div>
+      </section>
+    </main>
+  </div>
+
+  <script src="https://unpkg.com/konva@9/konva.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
