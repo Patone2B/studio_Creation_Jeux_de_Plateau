@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Deck Studio Local</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Cinzel:wght@400;600;700&family=Orbitron:wght@400;700&family=Playfair+Display:wght@500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="app" class="app-shell">
+    <section id="startScreen" class="screen active">
+      <div class="hero-card glass">
+        <div class="hero-text">
+          <span class="eyebrow">Deck Studio Local</span>
+          <h1>Crée, édite et exporte tes cartes en local</h1>
+          <p>Images locales, texte, formes, recto/verso, export JSON, PNG, JPEG et PDF. Sauvegarde navigateur améliorée avec option de désactivation par deck.</p>
+          <div class="hero-actions">
+            <button id="createDeckBtn" class="btn primary">Nouveau deck</button>
+            <label class="btn secondary file-btn">
+              Importer JSON
+              <input type="file" id="importDeckInput" accept="application/json,.json" hidden>
+            </label>
+            <button id="aboutBtn" class="btn ghost">À propos</button>
+          </div>
+        </div>
+        <div class="hero-preview">
+          <div class="floating-card theme-mystic"></div>
+          <div class="floating-card theme-neon"></div>
+          <div class="floating-card theme-classic"></div>
+        </div>
+      </div>
+
+      <div class="saved-section">
+        <div class="section-header">
+          <h2>Decks enregistrés</h2>
+          <button id="refreshDecksBtn" class="btn tiny ghost">Actualiser</button>
+        </div>
+        <div id="savedDecks" class="deck-grid"></div>
+      </div>
+    </section>
+
+    <section id="editorScreen" class="screen">
+      <header class="topbar glass">
+        <div class="brand-line">
+          <button id="backToHomeBtn" class="btn ghost">Accueil</button>
+          <input id="deckNameInput" class="deck-name-input" type="text" value="Mon deck" maxlength="80">
+          <span id="saveStatus" class="save-status">Sauvegardé</span>
+        </div>
+        <div class="topbar-actions">
+          <label class="check-row save-toggle-row"><input type="checkbox" id="persistDeckToggle" checked> Sauvegarde navigateur</label>
+          <button id="undoBtn" class="btn tiny ghost">Annuler</button>
+          <button id="redoBtn" class="btn tiny ghost">Rétablir</button>
+          <button id="saveDeckBtn" class="btn tiny secondary">Sauvegarder</button>
+          <button id="exportJsonBtn" class="btn tiny secondary">JSON</button>
+          <button id="exportPngBtn" class="btn tiny secondary">PNG</button>
+          <button id="exportJpegBtn" class="btn tiny secondary">JPEG</button>
+          <button id="exportPdfBtn" class="btn tiny primary">PDF</button>
+        </div>
+      </header>
+
+      <main class="editor-layout">
+        <aside class="sidebar glass left-sidebar">
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Cartes</h3>
+              <button id="addCardBtn" class="btn tiny primary">+ Carte</button>
+            </div>
+            <div class="card-actions-row">
+              <button id="duplicateCardBtn" class="btn tiny secondary">Dupliquer</button>
+              <button id="deleteCardBtn" class="btn tiny danger">Supprimer</button>
+            </div>
+            <div id="cardsList" class="cards-list"></div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Face</h3>
+            </div>
+            <div class="toggle-group">
+              <button id="frontBtn" class="btn tiny primary">Recto</button>
+              <button id="backBtn" class="btn tiny ghost">Verso</button>
+            </div>
+            <button id="flipCardBtn" class="btn tiny secondary full">Animation recto/verso</button>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Ajouter</h3>
+            </div>
+            <div class="tool-grid">
+              <button class="btn tiny secondary tool-btn" data-add="text">Texte</button>
+              <label class="btn tiny secondary file-btn tool-btn full">Image<input type="file" id="imageInput" accept="image/*" hidden></label>
+              <button class="btn tiny secondary tool-btn" data-add="rect">Rectangle</button>
+              <button class="btn tiny secondary tool-btn" data-add="circle">Cercle</button>
+              <button class="btn tiny secondary tool-btn" data-add="triangle">Triangle</button>
+              <button class="btn tiny secondary tool-btn" data-add="line">Ligne</button>
+              <button class="btn tiny secondary tool-btn" data-add="badge">Badge</button>
+              <button class="btn tiny secondary tool-btn" data-add="frame">Cadre</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Modèles</h3>
+            </div>
+            <div class="template-grid">
+              <button class="template-btn theme-classic" data-theme="classic">Classique</button>
+              <button class="template-btn theme-neon" data-theme="neon">Néon</button>
+              <button class="template-btn theme-mystic" data-theme="mystic">Mystique</button>
+              <button class="template-btn theme-ember" data-theme="ember">Ember</button>
+              <button class="template-btn theme-ocean" data-theme="ocean">Océan</button>
+              <button class="template-btn theme-minimal" data-theme="minimal">Minimal</button>
+            </div>
+          </div>
+        </aside>
+
+        <section class="workspace">
+          <div class="workspace-toolbar glass">
+            <label class="check-row"><input type="checkbox" id="snapToggle" checked> Grille aimantée</label>
+            <label class="check-row"><input type="checkbox" id="showGridToggle" checked> Afficher grille</label>
+            <label class="check-row"><input type="checkbox" id="safeZoneToggle" checked> Zone sûre</label>
+            <button id="centerElementBtn" class="btn tiny ghost">Centrer élément</button>
+            <button id="bringFrontBtn" class="btn tiny ghost">Premier plan</button>
+            <button id="sendBackBtn" class="btn tiny ghost">Arrière-plan</button>
+            <button id="duplicateElementBtn" class="btn tiny ghost">Dupliquer élément</button>
+            <button id="deleteElementBtn" class="btn tiny danger">Suppr élément</button>
+          </div>
+
+          <div id="canvasWrap" class="canvas-wrap show-grid show-safe-zone">
+            <div id="cardStage" class="card-stage">
+              <div id="cardCanvas" class="card-canvas"></div>
+            </div>
+          </div>
+        </section>
+
+        <aside class="sidebar glass right-sidebar">
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Carte</h3>
+            </div>
+            <label>Largeur <input type="number" id="cardWidthInput" min="200" max="1200" step="10"></label>
+            <label>Hauteur <input type="number" id="cardHeightInput" min="200" max="1600" step="10"></label>
+            <label>Fond <input type="color" id="cardBgInput"></label>
+            <label>Opacité fond <input type="range" id="cardBgOpacityInput" min="0" max="1" step="0.01"></label>
+            <label>Image de fond <input type="file" id="cardBackgroundImageInput" accept="image/*"></label>
+            <button id="clearCardBgImageBtn" class="btn tiny ghost full">Retirer image de fond</button>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Élément sélectionné</h3>
+            </div>
+            <div id="selectionEmpty" class="muted">Sélectionne un texte, une image ou une forme.</div>
+            <div id="selectionControls" class="selection-controls hidden">
+              <label>Nom <input type="text" id="elementNameInput"></label>
+              <label>X <input type="number" id="elementXInput" step="1"></label>
+              <label>Y <input type="number" id="elementYInput" step="1"></label>
+              <label>Largeur <input type="number" id="elementWidthInput" step="1"></label>
+              <label>Hauteur <input type="number" id="elementHeightInput" step="1"></label>
+              <label>Rotation <input type="range" id="elementRotationInput" min="-180" max="180" step="1"></label>
+              <label>Opacité <input type="range" id="elementOpacityInput" min="0.05" max="1" step="0.01"></label>
+              <label>Couleur <input type="color" id="elementColorInput"></label>
+              <label>Couleur bordure <input type="color" id="elementBorderColorInput"></label>
+              <label>Taille bordure <input type="range" id="elementBorderWidthInput" min="0" max="30" step="1"></label>
+              <label>Rayon bordure <input type="range" id="elementRadiusInput" min="0" max="200" step="1"></label>
+              <label>Taille police <input type="range" id="elementFontSizeInput" min="8" max="140" step="1"></label>
+              <label>Police
+                <select id="elementFontFamilyInput">
+                  <option>Inter</option>
+                  <option>Cinzel</option>
+                  <option>Orbitron</option>
+                  <option>Playfair Display</option>
+                  <option>Bebas Neue</option>
+                  <option>Arial</option>
+                  <option>Georgia</option>
+                  <option>Verdana</option>
+                </select>
+              </label>
+              <label>Texte <textarea id="elementTextInput" rows="4"></textarea></label>
+              <div class="toggle-group two-col">
+                <button id="textBoldBtn" class="btn tiny ghost">Gras</button>
+                <button id="textItalicBtn" class="btn tiny ghost">Italique</button>
+                <button id="alignLeftBtn" class="btn tiny ghost">Gauche</button>
+                <button id="alignCenterBtn" class="btn tiny ghost">Centre</button>
+                <button id="alignRightBtn" class="btn tiny ghost">Droite</button>
+                <button id="lockElementBtn" class="btn tiny ghost">Verrouiller</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Sauvegarde</h3>
+            </div>
+            <label class="check-row full-width"><input type="checkbox" id="persistDeckToggleMirror" checked> Conserver ce deck dans le navigateur</label>
+            <p class="muted compact">Quand cette option est désactivée, le deck reste éditable et exportable en JSON/PDF/PNG/JPEG, mais il n'est plus gardé dans la liste locale.</p>
+          </div>
+
+          <div class="panel">
+            <div class="panel-header">
+              <h3>Calques</h3>
+            </div>
+            <div id="layersList" class="layers-list"></div>
+          </div>
+        </aside>
+      </main>
+    </section>
+
+    <div id="aboutModal" class="modal hidden">
+      <div class="modal-card glass">
+        <div class="section-header">
+          <h2>À propos</h2>
+          <button id="closeAboutBtn" class="btn tiny ghost">Fermer</button>
+        </div>
+        <p>Deck Studio Local est un éditeur front-end simple pour créer des cartes personnalisées en local.</p>
+        <ul>
+          <li>Sauvegarde navigateur améliorée avec IndexedDB</li>
+          <li>Option par deck pour désactiver la conservation locale</li>
+          <li>Import/export JSON pour partager ou archiver</li>
+          <li>Export image et PDF via bibliothèques gratuites</li>
+          <li>Recto/verso par carte</li>
+          <li>Suppression rapide avec la touche Suppr / Backspace</li>
+          <li>Grille, zone sûre, modèles visuels, duplication et gestion des calques</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
