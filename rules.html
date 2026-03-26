@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Éditeur de règles</title>
+  <link rel="stylesheet" href="rules.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div>
+        <h1>Éditeur de règles</h1>
+        <p>Crée tes règles, organise tes sections, et ajoute une logique simple en blocs.</p>
+      </div>
+
+      <div class="topbar-actions">
+        <button id="exportBtn" class="btn btn-primary">Exporter les règles</button>
+        <button id="resetBtn" class="btn btn-secondary">Réinitialiser</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <!-- COLONNE GAUCHE -->
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Règles du jeu</h2>
+          <button id="addRuleBlockBtn" class="btn btn-secondary">+ Bloc de règle</button>
+        </div>
+
+        <div class="meta-box">
+          <div class="field">
+            <label for="gameTitle">Nom du jeu</label>
+            <input id="gameTitle" type="text" placeholder="Ex : Royaume des Brumes" />
+          </div>
+
+          <div class="field">
+            <label for="gameIntro">Résumé</label>
+            <textarea id="gameIntro" rows="3" placeholder="Décris rapidement le principe du jeu..."></textarea>
+          </div>
+        </div>
+
+        <div class="sections-grid">
+          <div class="section-card" data-section="setup">
+            <div class="section-card-header">
+              <h3>Mise en place</h3>
+              <button class="btn btn-small add-section-block">+ Ajouter</button>
+            </div>
+            <div class="rule-list" id="setupList"></div>
+          </div>
+
+          <div class="section-card" data-section="turn">
+            <div class="section-card-header">
+              <h3>Tour de jeu</h3>
+              <button class="btn btn-small add-section-block">+ Ajouter</button>
+            </div>
+            <div class="rule-list" id="turnList"></div>
+          </div>
+
+          <div class="section-card" data-section="victory">
+            <div class="section-card-header">
+              <h3>Victoire</h3>
+              <button class="btn btn-small add-section-block">+ Ajouter</button>
+            </div>
+            <div class="rule-list" id="victoryList"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- COLONNE DROITE -->
+      <section class="panel">
+        <div class="panel-header">
+          <h2>Logique simple</h2>
+          <div class="logic-actions">
+            <button id="addConditionBtn" class="btn btn-secondary">+ Si</button>
+            <button id="addActionBtn" class="btn btn-secondary">+ Alors</button>
+          </div>
+        </div>
+
+        <div class="logic-help">
+          <p>
+            Exemple : <strong>Si</strong> un joueur meurt → <strong>Alors</strong> retirer ses cartes →
+            <strong>Alors</strong> vérifier si la partie se termine.
+          </p>
+        </div>
+
+        <div id="logicFlow" class="logic-flow"></div>
+      </section>
+    </main>
+
+    <section class="panel export-panel">
+      <div class="panel-header">
+        <h2>Export lisible</h2>
+        <button id="copyExportBtn" class="btn btn-secondary">Copier le texte</button>
+      </div>
+      <textarea id="exportOutput" rows="18" readonly placeholder="L’export apparaîtra ici..."></textarea>
+    </section>
+  </div>
+
+  <template id="ruleBlockTemplate">
+    <article class="rule-block">
+      <div class="rule-block-top">
+        <span class="rule-badge">Règle</span>
+        <div class="rule-actions">
+          <button class="icon-btn move-up" title="Monter">↑</button>
+          <button class="icon-btn move-down" title="Descendre">↓</button>
+          <button class="icon-btn delete-rule" title="Supprimer">✕</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Titre du bloc</label>
+        <input type="text" class="rule-title" placeholder="Ex : Préparation des cartes" />
+      </div>
+
+      <div class="field">
+        <label>Texte</label>
+        <textarea class="rule-text" rows="4" placeholder="Décris la règle ici..."></textarea>
+      </div>
+
+      <div class="links-row">
+        <div class="field">
+          <label>Carte liée</label>
+          <input type="text" class="rule-card-link" placeholder="Ex : Carte Héros, Carte Boss..." />
+        </div>
+
+        <div class="field">
+          <label>Plateau lié</label>
+          <input type="text" class="rule-board-link" placeholder="Ex : Zone nord, case départ..." />
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <template id="logicBlockTemplate">
+    <article class="logic-block">
+      <div class="logic-connector"></div>
+
+      <div class="logic-block-top">
+        <span class="logic-type-badge">Bloc</span>
+        <div class="rule-actions">
+          <button class="icon-btn move-up" title="Monter">↑</button>
+          <button class="icon-btn move-down" title="Descendre">↓</button>
+          <button class="icon-btn delete-logic" title="Supprimer">✕</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Texte du bloc</label>
+        <input type="text" class="logic-text" placeholder="Ex : Un joueur meurt" />
+      </div>
+
+      <div class="field extra-field">
+        <label>Détail</label>
+        <textarea class="logic-detail" rows="3" placeholder="Ex : Ses unités sont retirées du plateau"></textarea>
+      </div>
+    </article>
+  </template>
+
+  <script src="rules.js"></script>
+</body>
+</html>
