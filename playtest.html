@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mode Playtest - Éditeur de Pions/Jetons/Dés</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="playtest.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-gamepad"></i> Mode Playtest</h1>
+        </header>
+
+        <!-- Barre d'outils -->
+        <div class="toolbar">
+            <div class="tool-group">
+                <button id="drawCard"><i class="fas fa-hand-holding"></i> Tirer une carte</button>
+                <button id="rollDice"><i class="fas fa-dice"></i> Lancer le dé</button>
+                <button id="resetGame"><i class="fas fa-redo"></i> Réinitialiser</button>
+            </div>
+        </div>
+
+        <!-- Zone de jeu -->
+        <div class="game-area">
+            <div class="deck" id="deck">
+                <div class="card" draggable="true">Carte 1</div>
+                <div class="card" draggable="true">Carte 2</div>
+            </div>
+            <div class="board" id="board">
+                <!-- Plateau de jeu -->
+            </div>
+            <div class="dice-result" id="diceResult">Dé : ?</div>
+        </div>
+    </div>
+
+    <script src="playtest.js"></script>
+</body>
+</html>
