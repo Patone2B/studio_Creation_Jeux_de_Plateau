@@ -46,37 +46,39 @@ const transformer = new Konva.Transformer({
 uiLayer.add(transformer);
 uiLayer.draw();
 
-const gridTypeInput = document.getElementById("gridType");
-const gridSizeInput = document.getElementById("gridSize");
-const showGridInput = document.getElementById("showGrid");
-const snapToGridInput = document.getElementById("snapToGrid");
-const applyGridBtn = document.getElementById("applyGridBtn");
-const gridSizeValue = document.getElementById("gridSizeValue");
+const $ = (id) => document.getElementById(id);
 
-const bgUpload = document.getElementById("bgUpload");
-const bgUrl = document.getElementById("bgUrl");
-const loadBgUrlBtn = document.getElementById("loadBgUrlBtn");
-const clearBgBtn = document.getElementById("clearBgBtn");
+const gridTypeInput = $("gridType");
+const gridSizeInput = $("gridSize");
+const showGridInput = $("showGrid");
+const snapToGridInput = $("snapToGrid");
+const applyGridBtn = $("applyGridBtn");
+const gridSizeValue = $("gridSizeValue");
 
-const zoneNameInput = document.getElementById("zoneName");
-const zoneTypeInput = document.getElementById("zoneType");
-const addRectZoneBtn = document.getElementById("addRectZoneBtn");
-const addCircleZoneBtn = document.getElementById("addCircleZoneBtn");
+const bgUpload = $("bgUpload");
+const bgUrl = $("bgUrl");
+const loadBgUrlBtn = $("loadBgUrlBtn");
+const clearBgBtn = $("clearBgBtn");
 
-const selectionEmpty = document.getElementById("selectionEmpty");
-const selectionEditor = document.getElementById("selectionEditor");
-const selectedZoneNameInput = document.getElementById("selectedZoneName");
-const selectedZoneTypeInput = document.getElementById("selectedZoneType");
-const selectedZoneShapeInput = document.getElementById("selectedZoneShape");
+const zoneNameInput = $("zoneName");
+const zoneTypeInput = $("zoneType");
+const addRectZoneBtn = $("addRectZoneBtn");
+const addCircleZoneBtn = $("addCircleZoneBtn");
 
-const duplicateSelectedBtn = document.getElementById("duplicateSelectedBtn");
-const bringForwardBtn = document.getElementById("bringForwardBtn");
-const sendBackwardBtn = document.getElementById("sendBackwardBtn");
-const deleteSelectedBtn = document.getElementById("deleteSelectedBtn");
+const selectionEmpty = $("selectionEmpty");
+const selectionEditor = $("selectionEditor");
+const selectedZoneNameInput = $("selectedZoneName");
+const selectedZoneTypeInput = $("selectedZoneType");
+const selectedZoneShapeInput = $("selectedZoneShape");
 
-const saveProjectBtn = document.getElementById("saveProjectBtn");
-const loadProjectInput = document.getElementById("loadProjectInput");
-const exportBtn = document.getElementById("exportBtn");
+const duplicateSelectedBtn = $("duplicateSelectedBtn");
+const bringForwardBtn = $("bringForwardBtn");
+const sendBackwardBtn = $("sendBackwardBtn");
+const deleteSelectedBtn = $("deleteSelectedBtn");
+
+const saveProjectBtn = $("saveProjectBtn");
+const loadProjectInput = $("loadProjectInput");
+const exportBtn = $("exportBtn");
 
 const zoneStyles = {
   combat: {
@@ -117,17 +119,25 @@ const zoneStyles = {
   }
 };
 
+function bindIfExists(element, eventName, handler) {
+  if (element) {
+    element.addEventListener(eventName, handler);
+  }
+}
+
 function getGridSettings() {
   return {
-    type: gridTypeInput.value,
-    size: parseInt(gridSizeInput.value, 10),
-    show: showGridInput.checked,
-    snap: snapToGridInput.checked
+    type: gridTypeInput ? gridTypeInput.value : "square",
+    size: gridSizeInput ? parseInt(gridSizeInput.value, 10) : 50,
+    show: showGridInput ? showGridInput.checked : true,
+    snap: snapToGridInput ? snapToGridInput.checked : false
   };
 }
 
 function updateGridSizeLabel() {
-  gridSizeValue.textContent = `${gridSizeInput.value} px`;
+  if (gridSizeValue && gridSizeInput) {
+    gridSizeValue.textContent = `${gridSizeInput.value} px`;
+  }
 }
 
 function clearSelection() {
@@ -145,6 +155,10 @@ function selectNode(node) {
 }
 
 function updateSelectionPanel() {
+  if (!selectionEmpty || !selectionEditor || !selectedZoneNameInput || !selectedZoneTypeInput || !selectedZoneShapeInput) {
+    return;
+  }
+
   if (!selectedNode) {
     selectionEmpty.classList.remove("hidden");
     selectionEditor.classList.add("hidden");
@@ -177,11 +191,13 @@ function makeSelectable(node) {
 
   node.on("dragend", () => {
     applySnapToNode(node, true);
+    clearSelection();
   });
 
   node.on("transformend", () => {
     normalizeGroupChildren(node);
     applySnapToNode(node, true);
+    clearSelection();
   });
 }
 
@@ -202,7 +218,7 @@ function applySnapToNode(node, forceDraw = false) {
   }
 
   if (settings.type === "hex") {
-    const stepX = Math.max(20, Math.round((Math.sqrt(3) * (settings.size / 2))));
+    const stepX = Math.max(20, Math.round(Math.sqrt(3) * (settings.size / 2)));
     const stepY = Math.max(20, Math.round((2 * (settings.size / 2)) * 0.75));
     node.x(snapValue(node.x(), stepX));
     node.y(snapValue(node.y(), stepY));
@@ -491,8 +507,8 @@ function relayoutZone(group) {
 }
 
 function createRectZone() {
-  const zoneName = zoneNameInput.value.trim() || "Nouvelle zone";
-  const zoneType = zoneTypeInput.value;
+  const zoneName = zoneNameInput ? zoneNameInput.value.trim() || "Nouvelle zone" : "Nouvelle zone";
+  const zoneType = zoneTypeInput ? zoneTypeInput.value : "custom";
 
   const group = createZoneGroup({
     zoneName,
@@ -508,8 +524,8 @@ function createRectZone() {
 }
 
 function createCircleZone() {
-  const zoneName = zoneNameInput.value.trim() || "Nouvelle zone";
-  const zoneType = zoneTypeInput.value;
+  const zoneName = zoneNameInput ? zoneNameInput.value.trim() || "Nouvelle zone" : "Nouvelle zone";
+  const zoneType = zoneTypeInput ? zoneTypeInput.value : "custom";
 
   const group = createZoneGroup({
     zoneName,
@@ -524,7 +540,7 @@ function createCircleZone() {
 }
 
 function updateSelectedZoneFromInputs() {
-  if (!selectedNode) return;
+  if (!selectedNode || !selectedZoneNameInput || !selectedZoneTypeInput) return;
 
   selectedNode.setAttr("zoneName", selectedZoneNameInput.value.trim() || "Nouvelle zone");
   selectedNode.setAttr("zoneType", selectedZoneTypeInput.value);
@@ -533,151 +549,11 @@ function updateSelectedZoneFromInputs() {
   updateSelectionPanel();
 }
 
-function duplicateSelectedZone() {
-  if (!selectedNode) return;
-
-  const zoneShape = selectedNode.getAttr("zoneShape");
-  const frame = selectedNode.findOne(".zone-frame");
-
-  const config = {
-    zoneName: `${selectedNode.getAttr("zoneName")} copie`,
-    zoneType: selectedNode.getAttr("zoneType"),
-    zoneShape,
-    x: selectedNode.x() + 40,
-    y: selectedNode.y() + 40
-  };
-
-  if (zoneShape === "rect") {
-    config.width = frame.width();
-    config.height = frame.height();
-  } else {
-    config.radius = frame.radius();
-  }
-
-  const copy = createZoneGroup(config);
-  selectNode(copy);
-}
-
 function deleteSelectedZone() {
   if (!selectedNode) return;
   selectedNode.destroy();
   clearSelection();
   zonesLayer.draw();
-}
-
-function moveSelectedForward() {
-  if (!selectedNode) return;
-  selectedNode.moveUp();
-  zonesLayer.draw();
-  uiLayer.draw();
-}
-
-function moveSelectedBackward() {
-  if (!selectedNode) return;
-  selectedNode.moveDown();
-  zonesLayer.draw();
-  uiLayer.draw();
-}
-
-function serializeZones() {
-  return zonesLayer
-    .getChildren(node => node instanceof Konva.Group)
-    .map(group => {
-      const frame = group.findOne(".zone-frame");
-      const shape = group.getAttr("zoneShape");
-
-      const base = {
-        zoneId: group.getAttr("zoneId"),
-        zoneName: group.getAttr("zoneName"),
-        zoneType: group.getAttr("zoneType"),
-        zoneShape: shape,
-        x: group.x(),
-        y: group.y()
-      };
-
-      if (shape === "rect") {
-        base.width = frame.width();
-        base.height = frame.height();
-      } else {
-        base.radius = frame.radius();
-      }
-
-      return base;
-    });
-}
-
-function downloadJSON(filename, data) {
-  const blob = new Blob([JSON.stringify(data, null, 2)], {
-    type: "application/json"
-  });
-
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
-}
-
-function saveProject() {
-  const payload = {
-    version: 1,
-    stage: {
-      width: STAGE_WIDTH,
-      height: STAGE_HEIGHT
-    },
-    grid: getGridSettings(),
-    background: currentBackgroundSrc,
-    zones: serializeZones()
-  };
-
-  downloadJSON("plateau-projet.json", payload);
-}
-
-function clearAllZones() {
-  zonesLayer.destroyChildren();
-  clearSelection();
-  zonesLayer.draw();
-}
-
-function loadProject(project) {
-  if (!project || typeof project !== "object") {
-    alert("Fichier JSON invalide.");
-    return;
-  }
-
-  clearAllZones();
-
-  if (project.grid) {
-    if (project.grid.type) gridTypeInput.value = project.grid.type;
-    if (typeof project.grid.size === "number") gridSizeInput.value = String(project.grid.size);
-    if (typeof project.grid.show === "boolean") showGridInput.checked = project.grid.show;
-    if (typeof project.grid.snap === "boolean") snapToGridInput.checked = project.grid.snap;
-    updateGridSizeLabel();
-    drawGrid();
-  }
-
-  if (project.background) {
-    addBackgroundImage(project.background);
-  } else {
-    if (backgroundImageNode) {
-      backgroundImageNode.destroy();
-      backgroundImageNode = null;
-    }
-    currentBackgroundSrc = null;
-    backgroundLayer.draw();
-  }
-
-  if (Array.isArray(project.zones)) {
-    project.zones.forEach(zone => {
-      createZoneGroup(zone);
-    });
-    zonesLayer.draw();
-  }
-
-  clearSelection();
 }
 
 function exportPNG() {
@@ -701,13 +577,46 @@ stage.on("click tap", (e) => {
   }
 });
 
-applyGridBtn.addEventListener("click", drawGrid);
+/* Zoom / dézoom molette ou trackpad */
+stage.on("wheel", (e) => {
+  e.evt.preventDefault();
 
-gridSizeInput.addEventListener("input", () => {
-  updateGridSizeLabel();
+  const oldScale = stage.scaleX();
+  const pointer = stage.getPointerPosition();
+  if (!pointer) return;
+
+  const scaleBy = 1.06;
+  const direction = e.evt.deltaY > 0 ? -1 : 1;
+  const newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
+  const clampedScale = Math.max(0.3, Math.min(3, newScale));
+
+  const mousePointTo = {
+    x: (pointer.x - stage.x()) / oldScale,
+    y: (pointer.y - stage.y()) / oldScale
+  };
+
+  stage.scale({ x: clampedScale, y: clampedScale });
+
+  const newPos = {
+    x: pointer.x - mousePointTo.x * clampedScale,
+    y: pointer.y - mousePointTo.y * clampedScale
+  };
+
+  stage.position(newPos);
+  stage.batchDraw();
 });
 
-bgUpload.addEventListener("change", (event) => {
+bindIfExists(applyGridBtn, "click", drawGrid);
+
+bindIfExists(gridSizeInput, "input", () => {
+  updateGridSizeLabel();
+  drawGrid();
+});
+
+bindIfExists(showGridInput, "change", drawGrid);
+bindIfExists(gridTypeInput, "change", drawGrid);
+
+bindIfExists(bgUpload, "change", (event) => {
   const file = event.target.files[0];
   if (!file) return;
 
@@ -716,13 +625,13 @@ bgUpload.addEventListener("change", (event) => {
   reader.readAsDataURL(file);
 });
 
-loadBgUrlBtn.addEventListener("click", () => {
-  const url = bgUrl.value.trim();
+bindIfExists(loadBgUrlBtn, "click", () => {
+  const url = bgUrl ? bgUrl.value.trim() : "";
   if (!url) return;
   addBackgroundImage(url);
 });
 
-clearBgBtn.addEventListener("click", () => {
+bindIfExists(clearBgBtn, "click", () => {
   if (backgroundImageNode) {
     backgroundImageNode.destroy();
     backgroundImageNode = null;
@@ -731,37 +640,14 @@ clearBgBtn.addEventListener("click", () => {
   backgroundLayer.draw();
 });
 
-addRectZoneBtn.addEventListener("click", createRectZone);
-addCircleZoneBtn.addEventListener("click", createCircleZone);
+bindIfExists(addRectZoneBtn, "click", createRectZone);
+bindIfExists(addCircleZoneBtn, "click", createCircleZone);
 
-selectedZoneNameInput.addEventListener("input", updateSelectedZoneFromInputs);
-selectedZoneTypeInput.addEventListener("change", updateSelectedZoneFromInputs);
+bindIfExists(selectedZoneNameInput, "input", updateSelectedZoneFromInputs);
+bindIfExists(selectedZoneTypeInput, "change", updateSelectedZoneFromInputs);
 
-duplicateSelectedBtn.addEventListener("click", duplicateSelectedZone);
-bringForwardBtn.addEventListener("click", moveSelectedForward);
-sendBackwardBtn.addEventListener("click", moveSelectedBackward);
-deleteSelectedBtn.addEventListener("click", deleteSelectedZone);
-
-saveProjectBtn.addEventListener("click", saveProject);
-
-loadProjectInput.addEventListener("change", (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    try {
-      const project = JSON.parse(e.target.result);
-      loadProject(project);
-    } catch (error) {
-      alert("Impossible de lire ce fichier JSON.");
-      console.error(error);
-    }
-  };
-  reader.readAsText(file);
-});
-
-exportBtn.addEventListener("click", exportPNG);
+bindIfExists(deleteSelectedBtn, "click", deleteSelectedZone);
+bindIfExists(exportBtn, "click", exportPNG);
 
 updateGridSizeLabel();
 drawGrid();
