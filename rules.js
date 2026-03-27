@@ -397,24 +397,3 @@ document.getElementById("importJsonFile").addEventListener("change", (e) => {
   }
 });
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-<button id="exportPdfBtn" class="btn btn-primary">Exporter PDF</button>
-function exportPDF() {
-  const element = document.createElement("div");
-  element.style.padding = "20px";
-  element.style.background = "white";
-  element.style.color = "black";
-
-  element.innerText = exportOutput.value;
-
-  html2pdf()
-    .set({
-      margin: 10,
-      filename: "regles-jeu.pdf",
-      html2canvas: { scale: 2 },
-      jsPDF: { unit: "mm", format: "a4", orientation: "portrait" }
-    })
-    .from(element)
-    .save();
-}
-document.getElementById("exportPdfBtn").addEventListener("click", exportPDF);
