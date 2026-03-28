@@ -10,12 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
     'startProjectBtn',
     'cardsBtn',
     'boardBtn',
-    'scriptBtn',
     'rulesBtn',
     'tokensBtn',
-    'playtestBtn',
-    'assetsBtn',
-    'exportBtn'
   ];
 
   buttons.forEach((id) => {
