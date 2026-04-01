@@ -1,266 +1,211 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Récupération des éléments
-    const canvas = document.getElementById('tokenCanvas');
-    const ctx = canvas.getContext('2d');
-    const shapeSelect = document.getElementById('shapeSelect');
-    const colorPicker = document.getElementById('colorPicker');
-    const lineWidth = document.getElementById('lineWidth');
-    const textInput = document.getElementById('textInput');
-    const addText = document.getElementById('addText');
-    const imageUpload = document.getElementById('imageUpload');
-    const clearCanvas = document.getElementById('clearCanvas');
-    const saveLocal = document.getElementById('saveLocal');
-    const loadLocal = document.getElementById('loadLocal');
-    const importJSON = document.getElementById('importJSON');
-    const exportJSON = document.getElementById('exportJSON');
-    const exportPNG = document.getElementById('exportPNG');
+:root {
+    --bg: #eef2f7;
+    --card: #ffffff;
+    --text: #1f2937;
+    --muted: #64748b;
+    --accent: #2563eb;
+    --accent-dark: #1d4ed8;
+    --border: #dbe3ee;
+    --shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+}
 
-    // Variables globales
-    let isDrawing = false;
-    let currentTool = 'pencil';
-    let startX, startY;
-    let tokens = [];
-    let currentImage = null;
+* { box-sizing: border-box; }
 
-    // Charger depuis le localStorage
-    function loadFromLocalStorage() {
-        const savedData = localStorage.getItem('tokenEditorData');
-        if (savedData) {
-            tokens = JSON.parse(savedData);
-            redrawCanvas();
-        }
+body {
+    margin: 0;
+    font-family: Inter, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(180deg, #f6f9fc 0%, #edf3f9 100%);
+    color: var(--text);
+}
+
+button, input, select {
+    font: inherit;
+}
+
+.app-shell {
+    width: min(1450px, calc(100% - 24px));
+    margin: 18px auto;
+}
+
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.topbar h1 {
+    margin: 0 0 8px;
+    font-size: clamp(1.5rem, 2vw, 2.2rem);
+}
+
+.topbar p {
+    margin: 0;
+    color: var(--muted);
+}
+
+.mode-switch {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.mode-btn, button {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: var(--card);
+    color: var(--text);
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+button:hover, .mode-btn:hover {
+    transform: translateY(-1px);
+    border-color: #bfd0ec;
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.08);
+}
+
+.mode-btn.active,
+button.primary,
+button.active-layer {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+.editor-panel { display: none; }
+.editor-panel.active { display: block; }
+
+.toolbar-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.toolbar-grid-3d {
+    grid-template-columns: repeat(3, minmax(260px, 1fr));
+}
+
+.panel-card,
+.workspace-card {
+    background: var(--card);
+    border: 1px solid rgba(219, 227, 238, 0.9);
+    border-radius: 20px;
+    padding: 18px;
+    box-shadow: var(--shadow);
+}
+
+.panel-card h2 {
+    margin: 0 0 14px;
+    font-size: 1.05rem;
+}
+
+.panel-card label {
+    display: block;
+    font-size: 0.92rem;
+    font-weight: 600;
+    margin: 12px 0 6px;
+}
+
+select,
+input[type="text"],
+input[type="file"],
+input[type="color"],
+input[type="range"] {
+    width: 100%;
+}
+
+select,
+input[type="text"],
+input[type="file"] {
+    padding: 11px 12px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: #fcfdff;
+}
+
+input[type="color"] {
+    height: 44px;
+    padding: 4px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background: #fff;
+}
+
+.stacked-actions {
+    display: grid;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.history-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.inline-value {
+    display: inline-block;
+    margin-top: 8px;
+    color: var(--muted);
+    font-size: 0.9rem;
+}
+
+.canvas-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    color: var(--muted);
+}
+
+.canvas-container {
+    overflow: auto;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    background:
+        linear-gradient(90deg, rgba(37,99,235,0.05) 1px, transparent 1px),
+        linear-gradient(rgba(37,99,235,0.05) 1px, transparent 1px),
+        white;
+    background-size: 25px 25px;
+}
+
+canvas {
+    display: block;
+    margin: 0 auto;
+    background: transparent;
+    cursor: crosshair;
+}
+
+.workspace-card-3d {
+    min-height: 720px;
+}
+
+.three-viewport {
+    width: 100%;
+    min-height: 640px;
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: radial-gradient(circle at top, #1f2937 0%, #0f172a 100%);
+}
+
+.desktop-only { display: flex; }
+
+@media (max-width: 1100px) {
+    .toolbar-grid,
+    .toolbar-grid-3d {
+        grid-template-columns: 1fr;
     }
 
-    // Sauvegarder dans le localStorage
-    function saveToLocalStorage() {
-        localStorage.setItem('tokenEditorData', JSON.stringify(tokens));
-        alert('Projet sauvegardé dans le navigateur !');
+    .topbar {
+        flex-direction: column;
     }
 
-    // Redessiner le canvas
-    function redrawCanvas() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        tokens.forEach(token => {
-            ctx.strokeStyle = token.color;
-            ctx.fillStyle = token.color;
-            ctx.lineWidth = token.lineWidth;
-
-            switch (token.type) {
-                case 'pencil':
-                    drawPencilPath(token.path);
-                    break;
-                case 'circle':
-                    ctx.beginPath();
-                    ctx.arc(token.x, token.y, token.radius, 0, Math.PI * 2);
-                    ctx.stroke();
-                    if (token.fill) ctx.fill();
-                    break;
-                case 'square':
-                    ctx.beginPath();
-                    ctx.rect(token.x, token.y, token.width, token.height);
-                    ctx.stroke();
-                    if (token.fill) ctx.fill();
-                    break;
-                case 'line':
-                    ctx.beginPath();
-                    ctx.moveTo(token.startX, token.startY);
-                    ctx.lineTo(token.endX, token.endY);
-                    ctx.stroke();
-                    break;
-                case 'text':
-                    ctx.font = `${token.size}px Arial`;
-                    ctx.fillStyle = token.color;
-                    ctx.fillText(token.text, token.x, token.y);
-                    break;
-                case 'image':
-                    const img = new Image();
-                    img.src = token.src;
-                    img.onload = () => ctx.drawImage(img, token.x, token.y, token.width, token.height);
-                    break;
-            }
-        });
+    .desktop-only {
+        display: none;
     }
-
-    // Dessiner un chemin (crayon)
-    function drawPencilPath(path) {
-        ctx.beginPath();
-        ctx.moveTo(path[0].x, path[0].y);
-        for (let i = 1; i < path.length; i++) {
-            ctx.lineTo(path[i].x, path[i].y);
-        }
-        ctx.stroke();
-    }
-
-    // Événements de dessin
-    canvas.addEventListener('mousedown', (e) => {
-        isDrawing = true;
-        startX = e.offsetX;
-        startY = e.offsetY;
-
-        if (currentTool === 'pencil' || currentTool === 'eraser') {
-            tokens.push({
-                type: currentTool,
-                color: currentTool === 'eraser' ? '#FFFFFF' : colorPicker.value,
-                lineWidth: lineWidth.value,
-                path: [{ x: startX, y: startY }]
-            });
-        }
-    });
-
-    canvas.addEventListener('mousemove', (e) => {
-        if (!isDrawing) return;
-
-        const currentX = e.offsetX;
-        const currentY = e.offsetY;
-
-        if (currentTool === 'pencil' || currentTool === 'eraser') {
-            const currentToken = tokens[tokens.length - 1];
-            currentToken.path.push({ x: currentX, y: currentY });
-            redrawCanvas();
-        }
-    });
-
-    canvas.addEventListener('mouseup', (e) => {
-        if (!isDrawing) return;
-        isDrawing = false;
-
-        const endX = e.offsetX;
-        const endY = e.offsetY;
-
-        switch (currentTool) {
-            case 'circle':
-                const radius = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
-                tokens.push({
-                    type: 'circle',
-                    x: startX,
-                    y: startY,
-                    radius: radius,
-                    color: colorPicker.value,
-                    lineWidth: lineWidth.value,
-                    fill: false
-                });
-                break;
-            case 'square':
-                const width = endX - startX;
-                const height = endY - startY;
-                tokens.push({
-                    type: 'square',
-                    x: startX,
-                    y: startY,
-                    width: width,
-                    height: height,
-                    color: colorPicker.value,
-                    lineWidth: lineWidth.value,
-                    fill: false
-                });
-                break;
-            case 'line':
-                tokens.push({
-                    type: 'line',
-                    startX: startX,
-                    startY: startY,
-                    endX: endX,
-                    endY: endY,
-                    color: colorPicker.value,
-                    lineWidth: lineWidth.value
-                });
-                break;
-        }
-
-        redrawCanvas();
-    });
-
-    // Ajouter du texte
-    addText.addEventListener('click', () => {
-        if (textInput.value.trim() === '') return;
-        tokens.push({
-            type: 'text',
-            text: textInput.value,
-            x: 50,
-            y: 50,
-            size: 20,
-            color: colorPicker.value
-        });
-        textInput.value = '';
-        redrawCanvas();
-    });
-
-    // Charger une image
-    imageUpload.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                const img = new Image();
-                img.src = event.target.result;
-                img.onload = () => {
-                    tokens.push({
-                        type: 'image',
-                        src: event.target.result,
-                        x: 50,
-                        y: 50,
-                        width: img.width / 2,
-                        height: img.height / 2
-                    });
-                    redrawCanvas();
-                };
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-
-    // Effacer le canvas
-    clearCanvas.addEventListener('click', () => {
-        if (confirm('Voulez-vous vraiment tout effacer ?')) {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            tokens = [];
-        }
-    });
-
-    // Sauvegarder dans le localStorage
-    saveLocal.addEventListener('click', saveToLocalStorage);
-
-    // Charger depuis le localStorage
-    loadLocal.addEventListener('click', loadFromLocalStorage);
-
-    // Importer un fichier JSON
-    importJSON.addEventListener('click', () => {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.json';
-        input.onchange = (e) => {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    tokens = JSON.parse(event.target.result);
-                    redrawCanvas();
-                };
-                reader.readAsText(file);
-            }
-        };
-        input.click();
-    });
-
-    // Exporter en JSON
-    exportJSON.addEventListener('click', () => {
-        const data = JSON.stringify(tokens, null, 2);
-        const blob = new Blob([data], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.download = 'pions_jetons_des.json';
-        link.href = url;
-        link.click();
-    });
-
-    // Exporter en PNG
-    exportPNG.addEventListener('click', () => {
-        const link = document.createElement('a');
-        link.download = 'pions_jetons_des.png';
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-    });
-
-    // Charger les données sauvegardées au démarrage
-    loadFromLocalStorage();
-});
+}
