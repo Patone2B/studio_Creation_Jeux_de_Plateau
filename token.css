@@ -13,7 +13,6 @@
 }
 
 *, *::before, *::after { box-sizing: border-box; }
-
 body {
     margin: 0;
     font-family: Inter, "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -21,229 +20,116 @@ body {
     color: var(--text);
     min-height: 100vh;
 }
-
 button, input, select, textarea { font: inherit; }
-
-.app-shell {
-    width: min(1500px, calc(100% - 24px));
-    margin: 18px auto 40px;
-}
-
-/* ─── Topbar ─── */
+.app-shell { width: min(1680px, calc(100% - 24px)); margin: 18px auto 40px; }
 .topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 16px;
-    margin-bottom: 20px;
-    padding: 20px 24px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
+    display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;
+    margin-bottom: 20px; padding: 20px 24px; background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); box-shadow: var(--shadow);
 }
-
-.topbar h1 {
-    margin: 0 0 6px;
-    font-size: clamp(1.3rem, 2vw, 1.9rem);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-}
+.topbar h1 { margin: 0 0 6px; font-size: clamp(1.3rem, 2vw, 1.9rem); font-weight: 700; letter-spacing: -0.02em; }
 .topbar h1 i { color: var(--accent); margin-right: 8px; }
 .topbar p { margin: 0; color: var(--muted); font-size: 0.9rem; }
-
-/* ─── Mode Switch ─── */
 .mode-switch { display: flex; gap: 8px; margin-bottom: 18px; }
-
 .mode-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 10px 22px;
-    border: 2px solid var(--border);
-    border-radius: 50px;
-    background: var(--card);
-    color: var(--muted);
-    font-weight: 600;
-    font-size: 0.92rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    display: inline-flex; align-items: center; gap: 8px; padding: 10px 22px; border: 2px solid var(--border);
+    border-radius: 50px; background: var(--card); color: var(--muted); font-weight: 600; font-size: 0.92rem;
+    cursor: pointer; transition: all 0.2s ease;
 }
 .mode-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-light); }
 .mode-btn.active { background: var(--accent); color: white; border-color: var(--accent); box-shadow: 0 4px 14px rgba(37,99,235,0.3); }
-
-/* ─── Editor panels ─── */
 .editor-panel { display: none; }
 .editor-panel.active { display: block; }
-
-/* ─── Grid ─── */
-.toolbar-grid {
+.editor-layout {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(290px, 340px) minmax(0, 1fr) minmax(290px, 340px);
     gap: 16px;
-    margin-bottom: 16px;
+    align-items: start;
 }
-
-/* ─── Cards ─── */
+.side-column {
+    display: grid;
+    gap: 16px;
+    position: sticky;
+    top: 12px;
+}
+.center-workspace { min-width: 0; }
 .panel-card, .workspace-card {
-    background: var(--card);
-    border: 1px solid rgba(219,227,238,0.8);
-    border-radius: var(--radius);
-    padding: 20px;
-    box-shadow: var(--shadow);
-    transition: box-shadow 0.2s;
+    background: var(--card); border: 1px solid rgba(219,227,238,0.8); border-radius: var(--radius);
+    padding: 20px; box-shadow: var(--shadow); transition: box-shadow 0.2s;
 }
 .panel-card:hover { box-shadow: var(--shadow-hover); }
-
 .panel-card h2 {
-    margin: 0 0 16px;
-    font-size: 0.88rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    color: var(--muted);
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    margin: 0 0 16px; font-size: 0.88rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.07em; color: var(--muted); display: flex; align-items: center; gap: 8px;
 }
 .panel-card h2::before {
-    content: '';
-    display: inline-block;
-    width: 3px; height: 14px;
-    background: var(--accent);
-    border-radius: 2px;
-    flex-shrink: 0;
+    content: ''; display: inline-block; width: 3px; height: 14px; background: var(--accent); border-radius: 2px; flex-shrink: 0;
 }
-
 .panel-card label {
-    display: block;
-    font-size: 0.78rem;
-    font-weight: 600;
-    margin: 14px 0 5px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
+    display: block; font-size: 0.78rem; font-weight: 600; margin: 14px 0 5px; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.05em;
 }
-
-/* ─── Inputs ─── */
 select, input[type="text"], input[type="file"] {
-    width: 100%;
-    padding: 10px 12px;
-    border-radius: 10px;
-    border: 1.5px solid var(--border);
-    background: #f9fbff;
-    color: var(--text);
-    transition: border-color 0.2s, box-shadow 0.2s;
-    font-size: 0.9rem;
+    width: 100%; padding: 10px 12px; border-radius: 10px; border: 1.5px solid var(--border);
+    background: #f9fbff; color: var(--text); transition: border-color 0.2s, box-shadow 0.2s; font-size: 0.9rem;
 }
-select:focus, input[type="text"]:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,0.12); }
+select:focus, input[type="text"]:focus {
+    outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+}
 input[type="color"] { width:100%; height:44px; padding:3px; border:1.5px solid var(--border); border-radius:10px; background:#fff; cursor:pointer; }
 input[type="range"] { width:100%; accent-color: var(--accent); cursor:pointer; margin-top:4px; }
-
-/* ─── Buttons ─── */
 button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 7px;
-    border: 1.5px solid var(--border);
-    border-radius: 10px;
-    background: var(--card);
-    color: var(--text);
-    padding: 9px 14px;
-    font-size: 0.88rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.18s ease;
-    white-space: nowrap;
+    display: inline-flex; align-items: center; justify-content: center; gap: 7px; border: 1.5px solid var(--border);
+    border-radius: 10px; background: var(--card); color: var(--text); padding: 9px 14px; font-size: 0.88rem;
+    font-weight: 500; cursor: pointer; transition: all 0.18s ease; white-space: nowrap;
 }
 button:hover {
-    transform: translateY(-1px);
-    border-color: var(--accent);
-    color: var(--accent);
-    background: var(--accent-light);
+    transform: translateY(-1px); border-color: var(--accent); color: var(--accent); background: var(--accent-light);
     box-shadow: 0 4px 12px rgba(37,99,235,0.1);
 }
 button:active { transform: translateY(0); }
-button.primary, .history-actions button { background:var(--accent); color:white; border-color:var(--accent); }
-button.primary:hover, .history-actions button:hover { background:var(--accent-dark); border-color:var(--accent-dark); color:white; }
-
+.history-actions button { background:var(--accent); color:white; border-color:var(--accent); }
+.history-actions button:hover { background:var(--accent-dark); border-color:var(--accent-dark); color:white; }
 .stacked-actions { display:grid; gap:8px; margin-top:14px; }
 .history-actions { display:flex; gap:8px; }
 .inline-value { display:inline-block; margin-top:4px; color:var(--accent); font-size:0.85rem; font-weight:600; }
-
-/* ─── Canvas toolbar ─── */
 .canvas-toolbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 14px;
-    color: var(--muted);
-    font-size: 0.85rem;
+    display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 14px;
+    color: var(--muted); font-size: 0.85rem;
 }
 .canvas-toolbar i { margin-right:6px; color:var(--accent); }
-
-/* ─── 2D Canvas ─── */
 .canvas-container {
-    overflow: auto;
-    border-radius: 14px;
-    border: 1.5px solid var(--border);
-    background:
-        linear-gradient(90deg, rgba(37,99,235,0.04) 1px, transparent 1px),
-        linear-gradient(rgba(37,99,235,0.04) 1px, transparent 1px),
-        white;
+    overflow: auto; border-radius: 14px; border: 1.5px solid var(--border);
+    background: linear-gradient(90deg, rgba(37,99,235,0.04) 1px, transparent 1px), linear-gradient(rgba(37,99,235,0.04) 1px, transparent 1px), white;
     background-size: 24px 24px;
 }
 canvas { display:block; margin:0 auto; background:transparent; cursor:crosshair; }
-
-/* ─── 3D Viewport ─── */
-.workspace-card-3d { min-height: 720px; }
-
+canvas.select-mode { cursor: grab; }
+canvas.select-mode.dragging { cursor: grabbing; }
+.workspace-card-3d { min-height: 760px; }
 .three-viewport {
-    width: 100%;
-    min-height: 640px;
-    border-radius: 14px;
-    overflow: hidden;
-    border: 1.5px solid var(--border);
-    background: radial-gradient(ellipse at 30% 20%, #1e3a5f 0%, #0f172a 70%);
-    position: relative;
+    width: 100%; min-height: 680px; border-radius: 14px; overflow: hidden; border: 1.5px solid var(--border);
+    background: radial-gradient(ellipse at 30% 20%, #1e3a5f 0%, #0f172a 70%); position: relative;
 }
-
-/* Canvas THREE doit remplir le viewport */
-.three-viewport > canvas {
-    display: block !important;
-    width: 100% !important;
-    height: 100% !important;
-    cursor: grab !important;
-}
-.three-viewport > canvas:active { cursor: grabbing !important; }
-
-/* Placeholder centré */
+.three-viewport > canvas { display: block !important; width: 100% !important; height: 100% !important; }
 .three-placeholder {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 580px;
-    color: #94a3b8;
-    text-align: center;
-    padding: 24px;
-    gap: 16px;
-    font-size: 1rem;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 620px;
+    color: #94a3b8; text-align: center; padding: 24px; gap: 16px; font-size: 1rem;
 }
 .three-placeholder i { opacity: 0.4; }
 .three-placeholder strong { color: #3b82f6; }
-
-/* ─── Responsive ─── */
+.mobile-only { display: none; }
 .desktop-only { display: flex; }
-
-@media (max-width: 1100px) {
-    .toolbar-grid { grid-template-columns: 1fr; }
-    .topbar { flex-direction: column; }
+#objectList { min-height: 220px; }
+@media (max-width: 1320px) {
+    .editor-layout { grid-template-columns: 1fr; }
+    .side-column { position: static; }
+    .mobile-only { display: block; }
     .desktop-only { display: none; }
 }
 @media (max-width: 640px) {
     .app-shell { width: calc(100% - 16px); margin: 12px auto 24px; }
-    .topbar { padding: 16px; }
+    .topbar { padding: 16px; flex-direction: column; }
+    .panel-card, .workspace-card { padding: 16px; }
+    .three-viewport { min-height: 520px; }
 }
