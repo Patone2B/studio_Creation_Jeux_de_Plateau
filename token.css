@@ -133,3 +133,7 @@ canvas.select-mode.dragging { cursor: grabbing; }
     .panel-card, .workspace-card { padding: 16px; }
     .three-viewport { min-height: 520px; }
 }
+
+.mini-help { margin: 10px 0 0; color: var(--muted); font-size: 0.8rem; line-height: 1.45; }
+#toggleBevelClick.active-toggle { background: var(--accent); color: #fff; border-color: var(--accent); }
+#objectList { min-height: 180px; }
