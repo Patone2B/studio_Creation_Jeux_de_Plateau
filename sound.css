@@ -1,0 +1,19 @@
+body {
+  font-family: Arial;
+  padding: 20px;
+}
+
+.module {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.link {
+  margin-top: 5px;
+}
+
+.preview img {
+  max-width: 200px;
+  display: block;
+}
