@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -9,13 +9,14 @@
 </head>
 <body>
     <div class="app-shell">
+
         <header class="topbar">
             <div>
                 <h1><i class="fas fa-cubes"></i> Éditeur 2D / 3D de Pions, Jetons et Dés</h1>
-                <p>Mode 2D pour dessiner et placer une image de fond, mode 3D séparé pour modéliser simplement.</p>
+                <p>Mode 2D pour dessiner et placer une image de fond · Mode 3D pour modéliser et visualiser tes pièces</p>
             </div>
             <div class="history-actions desktop-only">
-                <button id="undoBtn" type="button"><i class="fas fa-rotate-left"></i> Retour arrière</button>
+                <button id="undoBtn" type="button"><i class="fas fa-rotate-left"></i> Annuler</button>
                 <button id="redoBtn" type="button"><i class="fas fa-rotate-right"></i> Rétablir</button>
             </div>
         </header>
@@ -26,17 +27,19 @@
         </div>
 
         <main>
+
+            <!-- ══════════════ 2D EDITOR ══════════════ -->
             <section id="editor2d" class="editor-panel active">
                 <div class="toolbar-grid">
                     <div class="panel-card">
                         <h2>Outils 2D</h2>
                         <label for="shapeSelect">Outil</label>
                         <select id="shapeSelect">
-                            <option value="pencil">Crayon</option>
-                            <option value="circle">Cercle</option>
-                            <option value="square">Rectangle</option>
-                            <option value="line">Ligne</option>
-                            <option value="eraser">Gomme</option>
+                            <option value="pencil">✏️ Crayon</option>
+                            <option value="circle">⭕ Cercle</option>
+                            <option value="square">▭ Rectangle</option>
+                            <option value="line">╱ Ligne</option>
+                            <option value="eraser">🧹 Gomme</option>
                         </select>
 
                         <label for="colorPicker">Couleur</label>
@@ -50,8 +53,10 @@
                     <div class="panel-card">
                         <h2>Texte et image</h2>
                         <label for="textInput">Texte</label>
-                        <input type="text" id="textInput" placeholder="Texte ou numéro">
-                        <button id="addText" type="button"><i class="fas fa-plus"></i> Ajouter le texte</button>
+                        <input type="text" id="textInput" placeholder="Saisir un texte ou numéro…">
+                        <div class="stacked-actions" style="margin-top:8px;">
+                            <button id="addText" type="button"><i class="fas fa-plus"></i> Ajouter le texte</button>
+                        </div>
 
                         <label for="imageUpload">Image de fond</label>
                         <input type="file" id="imageUpload" accept="image/*">
@@ -61,17 +66,17 @@
                         <div class="stacked-actions">
                             <button id="bringImageFront" type="button"><i class="fas fa-arrow-up"></i> Image au premier plan</button>
                             <button id="sendImageBack" type="button"><i class="fas fa-arrow-down"></i> Image en arrière-plan</button>
-                            <button id="removeImage" type="button"><i class="fas fa-image-slash"></i> Supprimer l'image</button>
+                            <button id="removeImage" type="button"><i class="fas fa-trash-can"></i> Supprimer l'image</button>
                         </div>
                     </div>
 
                     <div class="panel-card">
                         <h2>Projet 2D</h2>
-                        <div class="stacked-actions">
-                            <button id="undoBtnMobile" type="button"><i class="fas fa-rotate-left"></i> Retour arrière</button>
+                        <div class="stacked-actions" style="margin-top:0">
+                            <button id="undoBtnMobile" type="button"><i class="fas fa-rotate-left"></i> Annuler</button>
                             <button id="redoBtnMobile" type="button"><i class="fas fa-rotate-right"></i> Rétablir</button>
-                            <button id="clearCanvas" type="button"><i class="fas fa-trash"></i> Effacer</button>
-                            <button id="saveLocal" type="button"><i class="fas fa-save"></i> Sauvegarder</button>
+                            <button id="clearCanvas" type="button"><i class="fas fa-trash"></i> Effacer tout</button>
+                            <button id="saveLocal" type="button"><i class="fas fa-floppy-disk"></i> Sauvegarder</button>
                             <button id="loadLocal" type="button"><i class="fas fa-folder-open"></i> Charger</button>
                             <button id="importJSON" type="button"><i class="fas fa-file-import"></i> Importer JSON</button>
                             <button id="exportJSON" type="button"><i class="fas fa-file-export"></i> Exporter JSON</button>
@@ -82,7 +87,7 @@
 
                 <div class="workspace-card">
                     <div class="canvas-toolbar">
-                        <span><i class="fas fa-circle-info"></i> Fais glisser l'image de fond directement dans la zone 2D pour la déplacer.</span>
+                        <span><i class="fas fa-circle-info"></i> Glisse l'image de fond pour la déplacer. Clique sur la zone pour dessiner.</span>
                     </div>
                     <div class="canvas-container">
                         <canvas id="tokenCanvas" width="1000" height="650"></canvas>
@@ -90,37 +95,47 @@
                 </div>
             </section>
 
+            <!-- ══════════════ 3D EDITOR ══════════════ -->
             <section id="editor3d" class="editor-panel">
-                <div class="toolbar-grid toolbar-grid-3d">
+                <div class="toolbar-grid">
                     <div class="panel-card">
                         <h2>Création 3D</h2>
-                        <label for="primitiveSelect">Base</label>
+                        <label for="primitiveSelect">Forme de base</label>
                         <select id="primitiveSelect">
-                            <option value="box">Cube</option>
-                            <option value="cylinder">Cylindre</option>
-                            <option value="sphere">Sphère</option>
-                            <option value="token">Jeton</option>
-                            <option value="extrudeStar">Étoile extrudée</option>
-                            <option value="extrudeBadge">Badge extrudé</option>
+                            <option value="box">📦 Cube</option>
+                            <option value="cylinder">🥫 Cylindre</option>
+                            <option value="sphere">🔮 Sphère</option>
+                            <option value="token">🪙 Jeton (plat)</option>
+                            <option value="extrudeStar">⭐ Étoile extrudée</option>
+                            <option value="extrudeBadge">🏷️ Badge extrudé</option>
                         </select>
+
                         <label for="meshColor">Couleur</label>
                         <input type="color" id="meshColor" value="#3b82f6">
-                        <button id="addPrimitive" type="button"><i class="fas fa-cube"></i> Ajouter l'objet</button>
-                        <button id="deleteMesh" type="button"><i class="fas fa-trash"></i> Supprimer l'objet sélectionné</button>
+
+                        <div class="stacked-actions" style="margin-top:14px;">
+                            <button id="addPrimitive" type="button"><i class="fas fa-cube"></i> Ajouter l'objet</button>
+                            <button id="deleteMesh" type="button"><i class="fas fa-trash"></i> Supprimer la sélection</button>
+                        </div>
                     </div>
 
                     <div class="panel-card">
-                        <h2>Extrusion et congés</h2>
-                        <label for="extrudeDepth">Extrusion</label>
+                        <h2>Extrusion &amp; Congés</h2>
+                        <label for="extrudeDepth">Profondeur d'extrusion</label>
                         <input type="range" id="extrudeDepth" min="2" max="80" value="18">
                         <span id="extrudeDepthValue" class="inline-value">18</span>
-                        <label for="bevelSize">Congé</label>
+
+                        <label for="bevelSize">Taille du congé</label>
                         <input type="range" id="bevelSize" min="0" max="20" value="3">
                         <span id="bevelSizeValue" class="inline-value">3</span>
+
                         <label for="bevelSegments">Segments du congé</label>
                         <input type="range" id="bevelSegments" min="1" max="8" value="3">
                         <span id="bevelSegmentsValue" class="inline-value">3</span>
-                        <button id="applyExtrude" type="button"><i class="fas fa-wand-magic-sparkles"></i> Appliquer à l'objet</button>
+
+                        <div class="stacked-actions">
+                            <button id="applyExtrude" type="button"><i class="fas fa-wand-magic-sparkles"></i> Appliquer à l'objet sélectionné</button>
+                        </div>
                     </div>
 
                     <div class="panel-card">
@@ -128,9 +143,11 @@
                         <label for="scale3d">Échelle</label>
                         <input type="range" id="scale3d" min="20" max="250" value="100">
                         <span id="scale3dValue" class="inline-value">100 %</span>
+
                         <label for="rotateY3d">Rotation Y</label>
                         <input type="range" id="rotateY3d" min="0" max="360" value="0">
                         <span id="rotateY3dValue" class="inline-value">0°</span>
+
                         <div class="stacked-actions">
                             <button id="centerMesh" type="button"><i class="fas fa-crosshairs"></i> Recentrer l'objet</button>
                             <button id="reset3dView" type="button"><i class="fas fa-camera-rotate"></i> Réinitialiser la vue</button>
@@ -140,14 +157,15 @@
 
                 <div class="workspace-card workspace-card-3d">
                     <div class="canvas-toolbar">
-                        <span><i class="fas fa-mouse"></i> Rotation: clic gauche. Déplacement: clic droit. Zoom: molette.</span>
+                        <span><i class="fas fa-mouse"></i> Rotation: clic gauche &nbsp;|&nbsp; Déplacement: clic droit &nbsp;|&nbsp; Zoom: molette</span>
                     </div>
                     <div id="threeViewport" class="three-viewport"></div>
                 </div>
             </section>
+
         </main>
     </div>
 
-    <script type="module" src="token.js"></script>
+    <script src="token.js"></script>
 </body>
 </html>
