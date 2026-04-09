@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Sound Modules</title>
+  <link rel="stylesheet" href="sound.css">
+</head>
+<body>
+
+<h1>Gestionnaire de modules audio</h1>
+
+<div id="modules"></div>
+
+<button onclick="addModule()">+ Ajouter un module</button>
+<button onclick="exportJSON()">Exporter JSON</button>
+<input type="file" onchange="importJSON(event)">
+<button onclick="exportPDF()">Exporter PDF</button>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="sound.js"></script>
+</body>
+</html>
