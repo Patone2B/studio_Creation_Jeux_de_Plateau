@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Système de quête</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="hero">
+      <div class="hero__overlay"></div>
+      <div class="hero__content">
+        <p class="eyebrow">Chroniques du Royaume</p>
+        <h1>Système de quête</h1>
+        <p class="hero__text">
+          Créez, organisez et exportez vos quêtes avec une ambiance jeu de rôle.
+          Chaque quête contient un nom, une description et un boss de fin.
+        </p>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel form-panel">
+        <div class="panel__header">
+          <h2>Nouvelle quête</h2>
+          <p>Ajoutez une quête à votre registre.</p>
+        </div>
+
+        <form id="questForm" class="quest-form">
+          <label>
+            <span>Nom de la quête</span>
+            <input type="text" id="questName" placeholder="Ex. Les Ruines du Corbeau" required />
+          </label>
+
+          <label>
+            <span>Description</span>
+            <textarea id="questDescription" rows="6" placeholder="Décrivez l'objectif, les étapes, les récompenses..." required></textarea>
+          </label>
+
+          <label>
+            <span>Boss de fin</span>
+            <input type="text" id="questBoss" placeholder="Ex. Morvhal, le roi des cendres" required />
+          </label>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn--primary">Ajouter la quête</button>
+            <button type="button" id="resetFormBtn" class="btn btn--ghost">Vider le formulaire</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel action-panel">
+        <div class="panel__header">
+          <h2>Gestion</h2>
+          <p>Importez, exportez et imprimez vos quêtes.</p>
+        </div>
+
+        <div class="toolbar">
+          <button type="button" id="exportJsonBtn" class="btn">Export JSON</button>
+          <label class="btn btn--ghost file-label">
+            Import JSON
+            <input type="file" id="importJsonInput" accept="application/json,.json" hidden />
+          </label>
+          <button type="button" id="exportPdfBtn" class="btn btn--accent">Export PDF</button>
+          <button type="button" id="clearAllBtn" class="btn btn--danger">Tout supprimer</button>
+        </div>
+
+        <div class="tips-box">
+          <h3>Conseils</h3>
+          <ul>
+            <li>Le JSON permet de sauvegarder votre progression localement.</li>
+            <li>Le PDF exporte la fiche visible dans un format prêt à imprimer.</li>
+            <li>Les quêtes sont conservées automatiquement dans le navigateur.</li>
+          </ul>
+        </div>
+      </section>
+    </main>
+
+    <section class="panel register-panel">
+      <div class="panel__header register-head">
+        <div>
+          <h2>Registre des quêtes</h2>
+          <p id="questCount">0 quête</p>
+        </div>
+      </div>
+
+      <div id="emptyState" class="empty-state">
+        <div class="empty-state__icon">✦</div>
+        <h3>Aucune quête enregistrée</h3>
+        <p>Commencez par créer votre première aventure.</p>
+      </div>
+
+      <div id="questList" class="quest-list"></div>
+    </section>
+
+    <section id="pdfExportArea" class="pdf-export-area" aria-hidden="true">
+      <div class="pdf-sheet">
+        <div class="pdf-sheet__header">
+          <p>Chroniques du Royaume</p>
+          <h2>Registre des quêtes</h2>
+          <span id="pdfDate"></span>
+        </div>
+        <div id="pdfQuestContainer" class="pdf-quest-container"></div>
+      </div>
+    </section>
+  </div>
+
+  <template id="questCardTemplate">
+    <article class="quest-card">
+      <div class="quest-card__glow"></div>
+      <div class="quest-card__content">
+        <div class="quest-card__top">
+          <span class="quest-badge">Quête</span>
+          <div class="quest-card__actions">
+            <button type="button" class="icon-btn edit-btn" title="Modifier">✎</button>
+            <button type="button" class="icon-btn delete-btn" title="Supprimer">✕</button>
+          </div>
+        </div>
+        <h3 class="quest-title"></h3>
+        <p class="quest-description"></p>
+        <div class="boss-box">
+          <span>Boss de fin</span>
+          <strong class="quest-boss"></strong>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-yzA4q6v6qjG0G4s8AjtKoa6HgMHqmpYyqn1nVbWcv16O3Qe9n1VWeNseyX2VINeodIZ6Tn6PvxI6Bfq5lHppZg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="app.js"></script>
+</body>
+</html>
