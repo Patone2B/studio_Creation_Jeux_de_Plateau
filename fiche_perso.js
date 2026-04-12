@@ -608,149 +608,206 @@ function exportPDF() {
 /* ─── WORD EXPORT ─── */
 function exportWord() {
   try {
+    const docxLib = window.docx;
+    if (!docxLib || !docxLib.Document || !docxLib.Packer) {
+      throw new Error("la bibliothèque docx n'est pas chargée");
+    }
+
     const {
       Document, Packer, Paragraph, TextRun,
       AlignmentType, Table, TableRow, TableCell,
-      WidthType, ShadingType, BorderStyle
-    } = docx;
+      WidthType, BorderStyle, HeadingLevel
+    } = docxLib;
 
     const s = sheets[currentSheet];
+    const safeName = (s.prenom || s.name || 'personnage')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || 'personnage';
 
-    const border      = { style: BorderStyle.SINGLE, size: 1, color: '8B6914' };
-    const cellBorders = { top: border, bottom: border, left: border, right: border };
-    const cellM       = { top: 80, bottom: 80, left: 140, right: 140 };
+    const border = { style: BorderStyle.SINGLE, size: 1, color: '8B6914' };
 
-    function heading(text) {
+    function title(text) {
       return new Paragraph({
-        children: [new TextRun({ text, bold: true, size: 24, color: '6B3A10', font: 'Georgia' })],
-        spacing: { before: 240, after: 120 },
-        border: { bottom: { style: BorderStyle.SINGLE, size: 6, color: 'C9963A', space: 1 } }
+        text,
+        heading: HeadingLevel.HEADING_1,
+        alignment: AlignmentType.CENTER,
+        spacing: { after: 220 },
+        thematicBreak: false
       });
     }
-    function field(label, value) {
-      if (!value) return null;
+
+    function section(text) {
       return new Paragraph({
         children: [
-          new TextRun({ text: label + ': ', bold: true, size: 20, color: '7A5C35', font: 'Georgia' }),
-          new TextRun({ text: String(value), size: 20, font: 'Georgia', color: '1A0F00' })
+          new TextRun({ text, bold: true, size: 28, color: '6B3A10', font: 'Georgia' })
         ],
-        spacing: { after: 60 }
+        spacing: { before: 220, after: 120 },
+        border: {
+          bottom: { style: BorderStyle.SINGLE, size: 6, color: 'C9963A', space: 1 }
+        }
       });
     }
-    function para(text) {
+
+    function line(label, value) {
       return new Paragraph({
-        children: [new TextRun({ text: String(text || ''), size: 20, font: 'Georgia', color: '1A0F00' })],
-        spacing: { after: 80 }
+        children: [
+          new TextRun({ text: `${label} : `, bold: true, size: 22, color: '7A5C35', font: 'Georgia' }),
+          new TextRun({ text: String(value ?? '—'), size: 22, color: '1A0F00', font: 'Georgia' })
+        ],
+        spacing: { after: 70 }
       });
     }
 
-    const children = [
-      new Paragraph({
-        children: [new TextRun({ text: 'FEUILLE DE PERSONNAGE RPG', bold: true, size: 36, color: 'C9963A', font: 'Georgia' })],
-        alignment: AlignmentType.CENTER,
-        spacing: { after: 200 }
-      }),
-      new Paragraph({
-        children: [new TextRun({ text: `${s.prenom} ${s.name} — ${s.classe} Niveau ${s.niveau}`.trim(), size: 22, italics: true, color: '7A5C35', font: 'Georgia' })],
-        alignment: AlignmentType.CENTER,
-        spacing: { after: 360 }
-      }),
+    function body(text) {
+      return new Paragraph({
+        children: [
+          new TextRun({ text: String(text ?? ''), size: 22, color: '1A0F00', font: 'Georgia' })
+        ],
+        spacing: { after: 90 }
+      });
+    }
 
-      heading('Identité'),
-      ...[
-        ['Nom', `${s.prenom || ''} ${s.name || ''}`],
-        ['Classe', s.classe], ['Niveau', s.niveau], ['Race', s.race],
-        ['Âge', s.age], ['Sexe', s.sexe], ['Alignement', s.alignement],
-        ['Arme de départ', s.arme],
-        ['Or', s.or ? s.or + ' pièces d\'or' : null],
-        ['Argent', s.argent ? s.argent + ' pièces d\'argent' : null],
-        ['Vitesse', s.vitesse], ['Langues', s.langues]
-      ].map(([l, v]) => field(l, v)).filter(Boolean),
+    const children = [];
 
-      heading('Caractéristiques'),
-      new Table({
-        width: { size: 9026, type: WidthType.DXA },
-        columnWidths: [1504, 1504, 1504, 1504, 1504, 1506],
-        rows: [
-          new TableRow({
-            children: ['FOR','DEX','CON','INT','SAG','CHA'].map(attr =>
-              new TableCell({
-                borders: cellBorders, margins: cellM,
-                width: { size: 1504, type: WidthType.DXA },
-                shading: { fill: 'F5EAD0', type: ShadingType.CLEAR },
-                children: [new Paragraph({
+    children.push(title('FEUILLE DE PERSONNAGE RPG'));
+    children.push(new Paragraph({
+      children: [
+        new TextRun({
+          text: `${s.prenom || ''} ${s.name || ''}`.trim() || 'Personnage sans nom',
+          bold: true,
+          size: 28,
+          color: 'C9963A',
+          font: 'Georgia'
+        })
+      ],
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 100 }
+    }));
+    children.push(new Paragraph({
+      children: [
+        new TextRun({
+          text: `${s.classe || '—'} — Niveau ${s.niveau || '—'}`,
+          italics: true,
+          size: 22,
+          color: '7A5C35',
+          font: 'Georgia'
+        })
+      ],
+      alignment: AlignmentType.CENTER,
+      spacing: { after: 260 }
+    }));
+
+    children.push(section('Identité'));
+    [
+      ['Nom complet', `${s.prenom || ''} ${s.name || ''}`.trim() || '—'],
+      ['Classe', s.classe || '—'],
+      ['Niveau', s.niveau || '—'],
+      ['Race', s.race || '—'],
+      ['Âge', s.age || '—'],
+      ['Sexe', s.sexe || '—'],
+      ['Alignement', s.alignement || '—'],
+      ['Arme de départ', s.arme || '—'],
+      ['Or', s.or ? `${s.or} pièces d\'or` : '—'],
+      ['Argent', s.argent ? `${s.argent} pièces d\'argent` : '—'],
+      ['Vitesse', s.vitesse || '—'],
+      ['Langues', s.langues || '—']
+    ].forEach(([l, v]) => children.push(line(l, v)));
+
+    children.push(section('Caractéristiques'));
+    children.push(new Table({
+      width: { size: 100, type: WidthType.PERCENTAGE },
+      rows: [
+        new TableRow({
+          children: ['FOR', 'DEX', 'CON', 'INT', 'SAG', 'CHA'].map(label => new TableCell({
+            borders: { top: border, bottom: border, left: border, right: border },
+            children: [new Paragraph({
+              alignment: AlignmentType.CENTER,
+              children: [new TextRun({ text: label, bold: true, size: 20, color: '7A5C35', font: 'Georgia' })]
+            })]
+          }))
+        }),
+        new TableRow({
+          children: [s.for, s.dex, s.con, s.int, s.sag, s.cha].map(value => {
+            const n = parseInt(value, 10) || 10;
+            const m = Math.floor((n - 10) / 2);
+            const modText = `${m >= 0 ? '+' : ''}${m}`;
+            return new TableCell({
+              borders: { top: border, bottom: border, left: border, right: border },
+              children: [
+                new Paragraph({
                   alignment: AlignmentType.CENTER,
-                  children: [new TextRun({ text: attr, bold: true, size: 18, color: '7A5C35', font: 'Georgia' })]
-                })]
-              })
-            )
-          }),
-          new TableRow({
-            children: [s.for, s.dex, s.con, s.int, s.sag, s.cha].map(v => {
-              const n  = parseInt(v) || 10;
-              const m2 = Math.floor((n - 10) / 2);
-              return new TableCell({
-                borders: cellBorders, margins: cellM,
-                width: { size: 1504, type: WidthType.DXA },
-                children: [
-                  new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: String(n), bold: true, size: 28, font: 'Georgia' })] }),
-                  new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: `(${m2 >= 0 ? '+' : ''}${m2})`, size: 16, italics: true, color: '7A5C35', font: 'Georgia' })] })
-                ]
-              });
-            })
+                  children: [new TextRun({ text: String(n), bold: true, size: 28, font: 'Georgia' })]
+                }),
+                new Paragraph({
+                  alignment: AlignmentType.CENTER,
+                  children: [new TextRun({ text: `(${modText})`, italics: true, size: 18, color: '7A5C35', font: 'Georgia' })]
+                })
+              ]
+            });
           })
-        ]
-      }),
-      new Paragraph({ spacing: { after: 200 } }),
+        })
+      ]
+    }));
 
-      heading('Points Vitaux'),
-      ...[
-        ['Points de Vie', `${s.hp || '—'} / ${s.hpmax || '—'}`],
-        ['Mana / Sorts',  `${s.mana || '—'} / ${s.manamax || '—'}`],
-        ['Classe d\'Armure', s.ca],
-        ['Initiative', s.initiative]
-      ].map(([l, v]) => field(l, v)).filter(Boolean)
-    ];
+    children.push(section('Points vitaux'));
+    [
+      ['Points de vie', `${s.hp || '—'} / ${s.hpmax || '—'}`],
+      ['Mana / Sorts', `${s.mana || '—'} / ${s.manamax || '—'}`],
+      ['Classe d\'armure', s.ca || '—'],
+      ['Initiative', s.initiative || '—'],
+      ['Inspiration', s.inspiration || '—']
+    ].forEach(([l, v]) => children.push(line(l, v)));
+
+    if (s.competences) {
+      children.push(section('Compétences'));
+      children.push(body(s.competences));
+    }
+
+    if (s.traits || s.ideaux || s.liens || s.defauts || s.maladresses) {
+      children.push(section('Histoire et personnalité'));
+      if (s.traits) children.push(line('Traits de personnalité', s.traits));
+      if (s.ideaux) children.push(line('Idéaux', s.ideaux));
+      if (s.liens) children.push(line('Liens', s.liens));
+      if (s.defauts) children.push(line('Défauts', s.defauts));
+      if (s.maladresses) children.push(line('Maladresses / Peurs', s.maladresses));
+    }
 
     if (s.backstory) {
-      children.push(heading('Backstory'));
-      s.backstory.split('\n').forEach(line => children.push(para(line)));
-    }
-
-    const persData = [
-      ['Traits de personnalité', s.traits],
-      ['Idéaux', s.ideaux],
-      ['Liens', s.liens],
-      ['Défauts', s.defauts]
-    ].filter(([, v]) => v);
-    if (persData.length) {
-      children.push(heading('Personnalité'));
-      persData.forEach(([l, v]) => children.push(field(l, v)));
-    }
-
-    const invData = s.inventaire.filter(Boolean);
-    if (invData.length) {
-      children.push(heading('Inventaire'));
-      invData.forEach((item, i) => children.push(new Paragraph({
-        children: [new TextRun({ text: `${i + 1}. ${item}`, size: 20, font: 'Georgia' })],
-        spacing: { after: 60 }
-      })));
-    }
-
-    const pdvData = [
-      ['Point de vue 1', s.pdv1], ['Point de vue 2', s.pdv2],
-      ['Relations / Alliés', s.pdv3], ['Ennemis / Rivaux', s.pdv4],
-      ['Notes', s.pdv5]
-    ].filter(([, v]) => v);
-    if (pdvData.length) {
-      children.push(heading('Points de Vue & Notes'));
-      pdvData.forEach(([l, v]) => {
-        children.push(field(l, v));
-        v.split('\n').filter(Boolean).forEach(line => children.push(para('  ' + line)));
+      children.push(section('Backstory'));
+      String(s.backstory).split(/\n+/).forEach(par => {
+        if (par.trim()) children.push(body(par.trim()));
       });
     }
 
-    const doc2 = new Document({
+    const invItems = (s.inventaire || []).filter(Boolean);
+    if (invItems.length) {
+      children.push(section('Inventaire'));
+      invItems.forEach((item, i) => {
+        children.push(new Paragraph({
+          children: [new TextRun({ text: `${i + 1}. ${item}`, size: 22, font: 'Georgia', color: '1A0F00' })],
+          spacing: { after: 70 }
+        }));
+      });
+    }
+
+    const notes = [
+      ['Point de vue 1', s.pdv1],
+      ['Point de vue 2', s.pdv2],
+      ['Relations / Alliés', s.pdv3],
+      ['Ennemis / Rivaux', s.pdv4],
+      ['Notes libres', s.pdv5]
+    ].filter(([, value]) => value);
+    if (notes.length) {
+      children.push(section('Points de vue et notes'));
+      notes.forEach(([label, value]) => {
+        children.push(line(label, value));
+      });
+    }
+
+    const docFile = new Document({
       sections: [{
         properties: {
           page: {
@@ -762,17 +819,26 @@ function exportWord() {
       }]
     });
 
-    Packer.toBlob(doc2).then(blob => {
-      const a    = document.createElement('a');
-      a.href     = URL.createObjectURL(blob);
-      a.download = `${(s.prenom || s.name || 'personnage').toLowerCase().replace(/\s+/g, '-')}-fiche.docx`;
-      a.click();
-      showToast('✦ Document Word exporté');
-    });
+    Packer.toBlob(docFile)
+      .then(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${safeName}-fiche.docx`;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        showToast('✦ Document Word exporté');
+      })
+      .catch(err => {
+        console.error(err);
+        showToast(`✗ Erreur export Word : ${err.message || err}`);
+      });
 
   } catch (e) {
-    showToast('✗ Erreur export Word : ' + e.message);
     console.error(e);
+    showToast('✗ Erreur export Word : ' + (e.message || e));
   }
 }
 
