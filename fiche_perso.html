@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feuille de Personnage RPG</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-parchment">
+<div class="app-wrapper">
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <span class="corner-ornament tl">⚔</span>
+    <span class="corner-ornament tr">🛡</span>
+    <h1>FEUILLE DE PERSONNAGE</h1>
+    <p>Choisissez votre fiche, remplissez votre destinée</p>
+  </header>
+
+  <!-- THEME BAR -->
+  <div class="theme-bar">
+    <span>Thème :</span>
+    <button class="theme-btn active" data-theme="parchment">📜 Parchemin</button>
+    <button class="theme-btn" data-theme="dark">🌑 Ombre</button>
+    <button class="theme-btn" data-theme="forest">🌲 Forêt</button>
+    <button class="theme-btn" data-theme="arcane">✦ Arcane</button>
+    <button class="theme-btn" data-theme="infernal">🔥 Infernal</button>
+  </div>
+
+  <!-- LAYOUT SELECTOR -->
+  <div class="layout-selector">
+    <h2>Choisissez votre modèle de fiche</h2>
+    <div class="layout-grid">
+
+      <!-- Layout 1 preview -->
+      <div class="layout-card selected" data-layout="1" onclick="selectLayout(1)">
+        <div class="layout-card-preview">
+          <div class="lc-preview-bar" style="height:6px;width:60%;"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;flex:1;">
+            <div style="display:flex;flex-direction:column;gap:3px;">
+              <div class="lc-preview-line"></div>
+              <div class="lc-preview-line" style="width:80%"></div>
+              <div class="lc-preview-line" style="width:60%"></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:3px;">
+              <div class="lc-preview-line"></div>
+              <div class="lc-preview-line" style="width:70%"></div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:3px;">
+            <div class="lc-preview-bar" style="height:18px;"></div>
+            <div class="lc-preview-bar" style="height:18px;"></div>
+            <div class="lc-preview-bar" style="height:18px;"></div>
+            <div class="lc-preview-bar" style="height:18px;"></div>
+            <div class="lc-preview-bar" style="height:18px;"></div>
+            <div class="lc-preview-bar" style="height:18px;"></div>
+          </div>
+        </div>
+        <div class="layout-card-label">I — Parchemin Classique</div>
+      </div>
+
+      <!-- Layout 2 preview -->
+      <div class="layout-card" data-layout="2" onclick="selectLayout(2)">
+        <div class="layout-card-preview">
+          <div class="lc-preview-bar" style="height:8px;width:50%;"></div>
+          <div class="lc-preview-line"></div>
+          <div class="lc-preview-line" style="width:90%"></div>
+          <div class="lc-preview-line" style="width:75%"></div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-top:4px;">
+            <div class="lc-preview-bar" style="height:16px;"></div>
+            <div class="lc-preview-bar" style="height:16px;"></div>
+            <div class="lc-preview-bar" style="height:16px;"></div>
+          </div>
+        </div>
+        <div class="layout-card-label">II — Codex du Voyageur</div>
+      </div>
+
+      <!-- Layout 3 preview -->
+      <div class="layout-card" data-layout="3" onclick="selectLayout(3)">
+        <div class="layout-card-preview" style="flex-direction:row;align-items:stretch;">
+          <div style="width:30%;border-right:2px solid var(--gold);padding-right:6px;display:flex;flex-direction:column;gap:4px;">
+            <div class="lc-preview-bar" style="height:5px;"></div>
+            <div class="lc-preview-line"></div>
+            <div class="lc-preview-line"></div>
+            <div class="lc-preview-line"></div>
+          </div>
+          <div style="flex:1;padding-left:6px;display:flex;flex-direction:column;gap:4px;">
+            <div class="lc-preview-line"></div>
+            <div class="lc-preview-line" style="width:80%"></div>
+            <div class="lc-preview-line" style="width:60%"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:auto;">
+              <div class="lc-preview-bar" style="height:14px;"></div>
+              <div class="lc-preview-bar" style="height:14px;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="layout-card-label">III — Grimoire du Sage</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MAIN: 3 SHEET THUMBNAILS -->
+  <main class="main">
+    <div class="sheets-wrapper layout-1" id="sheetsWrapper">
+
+      <!-- Sheet 1 -->
+      <div class="sheet-thumb" onclick="openModal(0)">
+        <div class="sheet-thumb-header">
+          <span class="sheet-thumb-title">Fiche I</span>
+          <span class="sheet-thumb-tag" id="tag0">Guerrier</span>
+        </div>
+        <div id="img0-thumb" class="sheet-thumb-img-placeholder">Cliquez pour ajouter une image</div>
+        <div class="sheet-thumb-body">
+          <div class="sheet-thumb-name" id="tname0">Nom du personnage</div>
+          <div class="sheet-thumb-stats" id="tstats0">
+            <span class="stat-pill">Race: —</span>
+            <span class="stat-pill">Âge: —</span>
+            <span class="stat-pill">Or: —</span>
+          </div>
+        </div>
+        <div class="open-hint">✦ OUVRIR LA FICHE ✦</div>
+      </div>
+
+      <!-- Sheet 2 -->
+      <div class="sheet-thumb" onclick="openModal(1)">
+        <div class="sheet-thumb-header">
+          <span class="sheet-thumb-title">Fiche II</span>
+          <span class="sheet-thumb-tag" id="tag1">Mage</span>
+        </div>
+        <div id="img1-thumb" class="sheet-thumb-img-placeholder">Cliquez pour ajouter une image</div>
+        <div class="sheet-thumb-body">
+          <div class="sheet-thumb-name" id="tname1">Nom du personnage</div>
+          <div class="sheet-thumb-stats" id="tstats1">
+            <span class="stat-pill">Race: —</span>
+            <span class="stat-pill">Âge: —</span>
+            <span class="stat-pill">Or: —</span>
+          </div>
+        </div>
+        <div class="open-hint">✦ OUVRIR LA FICHE ✦</div>
+      </div>
+
+      <!-- Sheet 3 -->
+      <div class="sheet-thumb" onclick="openModal(2)">
+        <div class="sheet-thumb-header">
+          <span class="sheet-thumb-title">Fiche III</span>
+          <span class="sheet-thumb-tag" id="tag2">Rôdeur</span>
+        </div>
+        <div id="img2-thumb" class="sheet-thumb-img-placeholder">Cliquez pour ajouter une image</div>
+        <div class="sheet-thumb-body">
+          <div class="sheet-thumb-name" id="tname2">Nom du personnage</div>
+          <div class="sheet-thumb-stats" id="tstats2">
+            <span class="stat-pill">Race: —</span>
+            <span class="stat-pill">Âge: —</span>
+            <span class="stat-pill">Or: —</span>
+          </div>
+        </div>
+        <div class="open-hint">✦ OUVRIR LA FICHE ✦</div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- MODAL -->
+  <div class="modal-backdrop" id="modalBackdrop" onclick="maybeCloseModal(event)">
+    <button class="modal-close" onclick="closeModal()">✕ Fermer</button>
+    <div class="modal-inner">
+      <div class="modal-sheet" id="modalSheetContent"></div>
+      <div class="modal-sidebar">
+        <div class="modal-sidebar-title">Exporter la fiche</div>
+        <button class="export-btn" onclick="exportPDF()"><span class="eb-icon">📄</span> Export PDF</button>
+        <button class="export-btn" onclick="exportWord()"><span class="eb-icon">📝</span> Export Word (.docx)</button>
+        <button class="export-btn" onclick="exportJSON()"><span class="eb-icon">💾</span> Sauvegarder JSON</button>
+        <button class="export-btn" onclick="document.getElementById('importFile').click()"><span class="eb-icon">📂</span> Importer JSON</button>
+        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importJSON(event)">
+        <div class="export-note">
+          ⚠ Le format .pages n'est pas disponible gratuitement en navigateur. Word (.docx) est compatible avec Pages sur Mac.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+</div><!-- /.app-wrapper -->
+
+<!-- LIBRARIES -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/docx/7.8.2/docx.umd.min.js"></script>
+<!-- APP -->
+<script src="script.js"></script>
+</body>
+</html>
