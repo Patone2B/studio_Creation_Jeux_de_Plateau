@@ -606,6 +606,30 @@ function exportPDF() {
 }
 
 /* ─── WORD EXPORT ─── */
+
+function exportRTF() {
+  const s = sheets[currentSheet];
+  const content = `
+{\rtf1\ansi\deff0
+\b FEUILLE DE PERSONNAGE RPG \b0\par
+Nom: ${s.prenom || ''} ${s.name || ''}\par
+Classe: ${s.classe} Niveau: ${s.niveau}\par
+Race: ${s.race}\par
+Age: ${s.age}\par
+\par
+FOR: ${s.for} DEX: ${s.dex} CON: ${s.con} INT: ${s.int} SAG: ${s.sag} CHA: ${s.cha}\par
+\par
+Backstory:\par ${s.backstory || ''}\par
+}
+`;
+  const blob = new Blob([content], {type: "application/rtf"});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = "fiche.rtf";
+  a.click();
+  showToast('✦ Export RTF (compatible Word)');
+}
+
 function exportWord() {
   try {
     const docxLib = window.docx;
